@@ -18,45 +18,32 @@ class DoublyLinkedList(object):
         self.length = 0
 
     def __getitem__(self, index: int) -> Any:
-        current = self.get(index)
-        if current:
-            return current.value
-        return -1
+        return self.get(index)
     
-    def _get_last_el(self):
+    def __str__(self):
+        if not self.head:
+            return "Empty"
         current = self.head
-        if current is None:
-            return None
-        while current.next:
-            current = current.next
-        self.tail = current
-        return current
+        values_generator = (str(current.value) for current in self._iterate_from(self.head))
+        return ' <-> '.join(values_generator)
+
+    def _iterate_from(self, node):
+        while node:
+            yield node
+            node = node.next
     
     def _bring_value(self, value):
         return Node(value)
     
-    def __str__(self):
-        current = self.head
-        if current is None:
-            return "[ ]"
-        str_print = ''
-        while current:
-            str_print += f' {current.value},'
-            current = current.next
-        return "[ " + str_print + " ]"
+    
     
     def push(self, value):
         new_node = self._bring_value(value)
         if self.head is None:
-            self.head = new_node
-        elif self.tail is None:
-            self.head.next = new_node
-            new_node.prev = self.head
-            self.tail = new_node
+            self.head, self.tail = new_node, new_node
         else:
-            last_el = self.tail
-            last_el.next = new_node
-            new_node.prev = last_el
+            self.tail.next = new_node
+            new_node.prev = self.tail
             self.tail = new_node
         self.length += 1
         return self.length
@@ -99,24 +86,16 @@ class DoublyLinkedList(object):
         return self.length
     
     def get(self, index):
-        if 0 < index <= self.length:
-            if index < self.length // 2:
-                current = self.head
-                for i in range(index):
-                    current = current.next
-                return current
-            else:
-                current = self.tail
-                for i in range(self.length - index - 1):
-                    current = current.prev
-                return current
-        return None
+        if index < 0 or index >= self.length:
+            return None
+        current = self.head
+        for i in range(index):
+            current = current.next
+        return current.value
     
     def count(self, value):
         current = self.head
         count = 0
-        if current is None:
-            return count
         while current:
             if current.value == value:
                 count += 1
@@ -135,20 +114,19 @@ class DoublyLinkedList(object):
         
         
     def insert(self, index: int, value):
-        if index == 0:
-            return self.unshift(value)
-        elif index == self.length:
-            return self.push(value)
-        elif 0 < index < self.length:
-            new_node = self._bring_value(value)
-            current = self.get(index)
-            new_node.prev = current.prev
-            new_node.next = current
+        if index < 0 or index >= self.length:
+            return None
+        new_node = self._bring_value(value)
+        current = self.head
+        for i in range(index):
+            current = current.next
+        if current.prev:
             current.prev.next = new_node
-            current.prev = new_node
-            self.length += 1
-            return self.length
-        return None
+            new_node.prev = current.prev
+        new_node.next = current
+        current.prev = new_node
+        self.length += 1
+        return self.length
         
     def remove(self, value, count=1):
         current = self.head
@@ -183,5 +161,5 @@ for i in range(10):
 x.push(1)
 # print(x.remove(1, 2))
 x.reverse()
-print(x[9])
+print(x)
 
