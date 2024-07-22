@@ -1,3 +1,6 @@
+from typing import Any
+
+
 class Node(object):
     def __init__(self, value):
         self.value = value
@@ -13,6 +16,12 @@ class DoublyLinkedList(object):
         self.head = None
         self.tail = None
         self.length = 0
+
+    def __getitem__(self, index: int) -> Any:
+        current = self.get(index)
+        if current:
+            return current.value
+        return -1
     
     def _get_last_el(self):
         current = self.head
@@ -22,6 +31,9 @@ class DoublyLinkedList(object):
             current = current.next
         self.tail = current
         return current
+    
+    def _bring_value(self, value):
+        return Node(value)
     
     def __str__(self):
         current = self.head
@@ -34,7 +46,7 @@ class DoublyLinkedList(object):
         return "[ " + str_print + " ]"
     
     def push(self, value):
-        new_node = Node(value)
+        new_node = self._bring_value(value)
         if self.head is None:
             self.head = new_node
         elif self.tail is None:
@@ -75,7 +87,7 @@ class DoublyLinkedList(object):
         return old_head.value
     
     def unshift(self, value):
-        new_node = Node(value)
+        new_node = self._bring_value(value)
         if self.head:
             self.head.prev = new_node
             new_node.next = self.head
@@ -121,12 +133,55 @@ class DoublyLinkedList(object):
             current = current.next
         return None
         
+        
+    def insert(self, index: int, value):
+        if index == 0:
+            return self.unshift(value)
+        elif index == self.length:
+            return self.push(value)
+        elif 0 < index < self.length:
+            new_node = self._bring_value(value)
+            current = self.get(index)
+            new_node.prev = current.prev
+            new_node.next = current
+            current.prev.next = new_node
+            current.prev = new_node
+            self.length += 1
+            return self.length
+        return None
+        
+    def remove(self, value, count=1):
+        current = self.head
+        while current:
+            if current.value == value:
+                if current.prev:
+                    current.prev.next = current.next
+                if current.next:
+                    current.next.prev = current.prev
+                self.length -= 1
+                count -= 1
+            if count == 0:
+                break
+            current = current.next
+        return self.length
+    
+    def reverse(self):
+        current = self.head
+        while current:
+            current.prev, current.next = current.next, current.prev
+            current = current.prev
+        self.head, self.tail = self.tail, self.head
+        return self
+        
+        
+        
 
 x = DoublyLinkedList()
 
 for i in range(10):
     x.push(i)
 x.push(1)
-
-print(x.count(1))
+# print(x.remove(1, 2))
+x.reverse()
+print(x[9])
 
