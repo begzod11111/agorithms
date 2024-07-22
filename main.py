@@ -13,13 +13,13 @@ class DoublyLinkedList(object):
         self.head = None
         self.length = 0
     
-    def _get_el(self, value=None):
+    def _get_last_el(self):
         current = self.head
-        while current:
-            if value is not None and current.value == value:
-                return current
+        if current is None:
+            return None
+        while current.next:
             current = current.next
-        return None
+        return current
     
     def __str__(self):
         current = self.head
@@ -34,7 +34,7 @@ class DoublyLinkedList(object):
         if self.head is None:
             self.head = new_node
         else:
-            last_el = self._get_el()
+            last_el = self._get_last_el()
             last_el.next = new_node
             new_node.prev = last_el
         self.length += 1
@@ -43,7 +43,7 @@ class DoublyLinkedList(object):
     def pop(self):
         if self.head is None:
             return None
-        last_el = self._get_el()
+        last_el = self._get_last_el()
         if last_el.prev:
             last_el.prev.next = None
         else:
