@@ -85,11 +85,48 @@ class DoublyLinkedList(object):
     
     def __len__(self):
         return self.length
+    
+    def get(self, index):
+        if 0 < index <= self.length:
+            if index < self.length // 2:
+                current = self.head
+                for i in range(index):
+                    current = current.next
+                return current
+            else:
+                current = self.tail
+                for i in range(self.length - index - 1):
+                    current = current.prev
+                return current
+        return None
+    
+    def count(self, value):
+        current = self.head
+        count = 0
+        if current is None:
+            return count
+        while current:
+            if current.value == value:
+                count += 1
+            current = current.next
+        return count
+    
+    def index(self, value):
+        current = self.head
+        if current is None:
+            return None
+        for i in range(self.length):
+            if current.value == value:
+                return i
+            current = current.next
+        return None
         
 
 x = DoublyLinkedList()
+
+for i in range(10):
+    x.push(i)
 x.push(1)
-x.push(2)
-x.push(3)
-x.pop()
-print(x)
+
+print(x.count(1))
+
