@@ -11,6 +11,7 @@ class Node(object):
 class DoublyLinkedList(object):
     def __init__(self):
         self.head = None
+        self.tail = None
         self.length = 0
     
     def _get_last_el(self):
@@ -19,10 +20,13 @@ class DoublyLinkedList(object):
             return None
         while current.next:
             current = current.next
+        self.tail = current
         return current
     
     def __str__(self):
         current = self.head
+        if current is None:
+            return "[ ]"
         str_print = ''
         while current:
             str_print += f' {current.value},'
@@ -33,21 +37,30 @@ class DoublyLinkedList(object):
         new_node = Node(value)
         if self.head is None:
             self.head = new_node
+        elif self.tail is None:
+            self.head.next = new_node
+            new_node.prev = self.head
+            self.tail = new_node
         else:
-            last_el = self._get_last_el()
+            last_el = self.tail
             last_el.next = new_node
             new_node.prev = last_el
+            self.tail = new_node
         self.length += 1
         return self.length
     
     def pop(self):
         if self.head is None:
             return None
-        last_el = self._get_last_el()
-        if last_el.prev:
-            last_el.prev.next = None
-        else:
+        elif self.head.next is None:
+            last_el = self.head
             self.head = None
+            self.length -= 1
+            return last_el.value
+        else:
+            last_el = self.tail
+            self.tail = last_el.prev
+            self.tail.next = None
         self.length -= 1
         return last_el.value
     
@@ -74,3 +87,9 @@ class DoublyLinkedList(object):
         return self.length
         
 
+x = DoublyLinkedList()
+x.push(1)
+x.push(2)
+x.push(3)
+x.pop()
+print(x)
