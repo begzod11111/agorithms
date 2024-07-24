@@ -1,5 +1,5 @@
 import unittest
-from main import DoublyLinkedList
+from doublyLinkedList import DoublyLinkedList
 
 class TestDoublyLinkedList(unittest.TestCase):
     def test_push(self):
